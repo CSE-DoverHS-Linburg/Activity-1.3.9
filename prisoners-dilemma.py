@@ -295,7 +295,6 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
                 return 'b' #colluder
             elif 'c' not in opponent_history:
                 return 'b' #backstabber
-
             else:
                 return 'c' # TODO: add in code to check for 10% greedy guy
 
