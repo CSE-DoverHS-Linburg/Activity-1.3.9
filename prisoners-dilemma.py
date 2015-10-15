@@ -303,6 +303,8 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
                 betray += 1
             if len(history) != 0 and (history[-1] == "c" and opponent_history[-1] == "b"): #this is vengeful code to win against the greedy AI
                 betray += 1
+            if len(history) != 0 and ((float(opponent_history.count('b'))/float(len(history))) > 0.7):
+                betray += 2
             if betray == 0 and collude == 0:
                 if random.random() < 0.25: #no idea of what to do? 75-25 shot
                     return 'b'         #betray
