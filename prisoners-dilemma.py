@@ -285,9 +285,9 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
                 if (len(history) % 3) == 0:
                     return 'b' #third round, the 3rd round colluder will collude, so lets betray to get a +
                 else:
-                    return 'b'
+                    return 'b' #3rd round colluder betrays this round cause its not the third, betray to minimize damage
             elif (re.match(vengefulLoyalistPattern, opponent_history) != None): #aaahhh, the common vengeful loyalist
-                if history[-1] == "b" and opponent_history[-1] == "c":
+                if history[-1] == "b" and opponent_history[-1] == "c": #they were severly punushed last time, they will betray this time, betray in turn to minimize damage
                     return "b"
                 else:
                     return "c"
@@ -296,7 +296,10 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
             elif 'c' not in opponent_history:
                 return 'b' #backstabber
             else:
-                return 'c' # TODO: add in code to check for 10% greedy guy
+                if random.random() < 0.5: #50% of the other rounds
+                    return 'b'         #betray
+                else:
+                    return 'c'         #otherwise collude
 
 
 
