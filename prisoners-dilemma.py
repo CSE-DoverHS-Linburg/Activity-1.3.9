@@ -281,25 +281,37 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
         if getting_team_name:
             return 'Pattern Matcher'
         else:
+            betray = 0
+            collude = 0
             if re.search(thirdRoundKiller, opponent_history) != None:
                 if (len(history) % 3) == 0:
-                    return 'b' #third round, the 3rd round colluder will collude, so lets betray to get a +
+                    #third round, the 3rd round colluder will collude, so lets betray to get a +
+                    betray += 1
                 else:
-                    return 'b' #3rd round colluder betrays this round cause its not the third, betray to minimize damage
-            elif (re.match(vengefulLoyalistPattern, opponent_history) != None): #aaahhh, the common vengeful loyalist
-                if history[-1] == "b" and opponent_history[-1] == "c": #they were severly punushed last time, they will betray this time, betray in turn to minimize damage
-                    return "b"
+                    #3rd round colluder betrays this round cause its not the third, betray to minimize damage
+                    betray += 1
+            if (re.match(vengefulLoyalistPattern, opponent_history) != None): #aaahhh, the common vengeful loyalist
+                if history[-1] == "b" and opponent_history[-1] == "c": #they were severly punished last time, they will betray this time, betray in turn to minimize damage
+                    betray += 1
                 else:
-                    return "c"
-            elif 'b' not in opponent_history:
-                return 'b' #colluder
-            elif 'c' not in opponent_history:
-                return 'b' #backstabber
-            else:
-                if random.random() < 0.5: #50% of the other rounds
+                    collude += 1
+            if 'b' not in opponent_history:
+                #colluder
+                betray += 1
+            if 'c' not in opponent_history:
+                #backstabber
+                betray += 1
+            if len(history) != 0 and (history[-1] == "c" and opponent_history[-1] == "b"): #this is vengeful code to win against the greedy AI
+                betray += 1
+            if betray == 0 and collude == 0:
+                if random.random() < 0.25: #no idea of what to do? 75-25 shot
                     return 'b'         #betray
                 else:
                     return 'c'         #otherwise collude
+            if betray < collude: # take note, if equal, will betray
+                return 'c'
+            else:
+                return 'b'
 
 
 
@@ -738,4 +750,3 @@ def play_tournament(num_players):
         print('player ' + str(player) , ': ' , 
                str(int(scores[player])/num_players) , ' points: ',
                team_names[player])
-    
