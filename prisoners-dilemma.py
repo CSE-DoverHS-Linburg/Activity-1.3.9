@@ -275,17 +275,31 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
     ######       
     #
     elif player == 7:
+        import re
+        vengefulLoyalistPattern = re.compile("[c]+[b]+")
+        thirdRoundKiller = re.compile("b{2}c")
         if getting_team_name:
-            return 'loyal vengeful'
+            return 'Pattern Matcher'
         else:
-            # use history, opponent_history, score, opponent_score
-            # to compute your strategy
-            if len(opponent_history)==0: #It's the first round: collude
+            if re.search(thirdRoundKiller, opponent_history) != None:
+                if (len(history) % 3) == 0:
+                    return 'b' #third round, the 3rd round colluder will collude, so lets betray to get a +
+                else:
+                    return 'b'
+            elif (re.match(vengefulLoyalistPattern, opponent_history) != None): #aaahhh, the common vengeful loyalist
+                if history[-1] == "b" and opponent_history[-1] == "c":
+                    return "b"
+                else:
+                    return "c"
+            elif len(opponent_history) == 0:
                 return 'c'
-            elif history[-1]=='c' and opponent_history[-1]=='b':
-                return 'b' # betray is they were sucker last time
+            elif 'b' not in opponent_history:
+                return 'b' #colluder
+            elif 'c' not in opponent_history:
+                return 'b' #backstabber
+
             else:
-                return 'c' #otherwise collude
+                return 'b' # TODO: add in code to check for 10% greedy guy
 
 
 
