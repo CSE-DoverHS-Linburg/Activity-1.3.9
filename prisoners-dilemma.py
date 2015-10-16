@@ -279,7 +279,7 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
         vengefulLoyalistPattern = re.compile("[c]+[b]+")
         thirdRoundKiller = re.compile("b{2}c")
         if getting_team_name:
-            return 'Pattern Matcher'
+            return 'Thinking Pattern Matcher'
         else:
             betray = 0
             collude = 0
