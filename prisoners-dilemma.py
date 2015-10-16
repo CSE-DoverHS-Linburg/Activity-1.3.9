@@ -464,18 +464,60 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
     #
     elif player == 12:
         if getting_team_name:
-            return 'loyal vengeful'
+            return '♅Å¢K3®'
         else:
-            # use history, opponent_history, score, opponent_score
-            # to compute your strategy
-            if len(opponent_history)==0: #It's the first round: collude
-                return 'c'
-            elif history[-1]=='c' and opponent_history[-1]=='b':
-                return 'b' # betray is they were severely punished last time
-            else:
-                return 'c' #otherwise collude
-    
-    
+            Player4Flag = 0
+            if len(opponent_history)==0:
+                return 'b'
+            elif len(opponent_history) >=1 and len(opponent_history) <=3:
+                Player0Flag=1
+                #detects betrayal
+                if 'c' not in opponent_history:
+                    return 'b'
+                #detects cooperative
+                for turn in opponent_history:
+                    if turn != 'c':
+                        Player0Flag=0
+                if Player0Flag == 1:
+                    return 'b'
+                else:
+                    return 'c'
+            elif len(opponent_history) > 3:
+                Player0Flag=1
+                #detects betrayal
+                if 'c' not in opponent_history:
+                    return 'b'
+                #detects cooperative
+                for turn in opponent_history:
+                    if turn != 'c':
+                        Player0Flag=0
+                if Player0Flag == 1:
+                    return 'b'
+                else:
+                     #detect 3rd round AI
+                    betrays = 0
+                    colludes = 0
+                    if opponent_history[-1] == 'b':
+                        betrays += 1
+                    else:
+                        colludes += 1
+                    if opponent_history[-2] == 'b':
+                        betrays += 1
+                    else:
+                        colludes += 1 
+                    if opponent_history[-3] == 'b':
+                        betrays += 1
+                    else:
+                        colludes += 1 
+                    if betrays == 2 and colludes == 1:
+                        Player4Flag = 1
+                    if Player4Flag ==1:
+                        return 'b'
+                    else:
+                        return 'c'
+            
+                
+                
 
 
     ######
