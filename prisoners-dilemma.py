@@ -284,17 +284,53 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
     ######       
     #
     elif player == 7:
+        import re
+        vengefulLoyalistPattern = re.compile("[c]+[b]+")
+        thirdRoundKiller = re.compile("b{2}c")
         if getting_team_name:
-            return 'loyal vengeful'
+            return 'Thinking Pattern Matcher'
         else:
-            # use history, opponent_history, score, opponent_score
-            # to compute your strategy
-            if len(opponent_history)==0: #It's the first round: collude
+            betray = 0
+            collude = 0
+            loyalVengeful = False
+            if re.search(thirdRoundKiller, opponent_history) != None:
+                if (len(history) % 3) == 0:
+                    #third round, the 3rd round colluder will collude, so lets betray to get a +
+                    betray += 1
+                else:
+                    #3rd round colluder betrays this round cause its not the third, betray to minimize damage
+                    betray += 1
+            if (re.match(vengefulLoyalistPattern, opponent_history) != None): #aaahhh, the common vengeful loyalist
+                loyalVengeful = True
+                if history[-1] == "b" and opponent_history[-1] == "c": #they were severly punished last time, they will betray this time, betray in turn to minimize damage
+                    betray += 1
+                else:
+                    collude += 1
+            if loyalVengeful: #detects that the enemy has loyal vengeful code, but lets see if it is a little bit more advanced than that
+                for i in range(len(history)):
+                    if history[i] == "c" and opponent_history[i] == "b" and i != 0 and history[i -1] == "c":
+                        betray += 1
+                        break
+            if 'b' not in opponent_history:
+                #colluder
+                betray += 1
+            if 'c' not in opponent_history:
+                #backstabber
+                betray += 1
+            if len(history) != 0 and (history[-1] == "c" and opponent_history[-1] == "b"): #this is vengeful code to win against the greedy AI
+                betray += 1
+            if len(history) != 0 and ((float(opponent_history.count('b'))/float(len(history))) > 0.7):
+                betray += 2
+            if betray == 0 and collude == 0:
+                if random.random() < 0.25: #no idea of what to do? 75-25 shot
+                    return 'b'         #betray
+                else:
+                    return 'c'         #otherwise collude
+            if betray < collude: # take note, if equal, will betray
                 return 'c'
-            elif history[-1]=='c' and opponent_history[-1]=='b':
-                return 'b' # betray is they were sucker last time
             else:
-                return 'c' #otherwise collude
+                return 'b'
+
 
 
 
