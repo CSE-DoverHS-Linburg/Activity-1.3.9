@@ -283,6 +283,7 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
         else:
             betray = 0
             collude = 0
+            loyalVengeful = False
             if re.search(thirdRoundKiller, opponent_history) != None:
                 if (len(history) % 3) == 0:
                     #third round, the 3rd round colluder will collude, so lets betray to get a +
@@ -291,10 +292,16 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
                     #3rd round colluder betrays this round cause its not the third, betray to minimize damage
                     betray += 1
             if (re.match(vengefulLoyalistPattern, opponent_history) != None): #aaahhh, the common vengeful loyalist
+                loyalVengeful = True
                 if history[-1] == "b" and opponent_history[-1] == "c": #they were severly punished last time, they will betray this time, betray in turn to minimize damage
                     betray += 1
                 else:
                     collude += 1
+            if loyalVengeful: #detects that the enemy has loyal vengeful code, but lets see if it is a little bit more advanced than that
+                for round in len(history):
+                    if history[round] == "c" and opponent_history[round] == "b" and history[round -1] == "c":
+                        betray += 1
+                        break
             if 'b' not in opponent_history:
                 #colluder
                 betray += 1
