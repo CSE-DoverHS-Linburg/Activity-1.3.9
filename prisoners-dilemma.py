@@ -298,8 +298,8 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
                 else:
                     collude += 1
             if loyalVengeful: #detects that the enemy has loyal vengeful code, but lets see if it is a little bit more advanced than that
-                for round in len(history):
-                    if history[round] == "c" and opponent_history[round] == "b" and history[round -1] == "c":
+                for i in range(len(history)):
+                    if history[i] == "c" and opponent_history[i] == "b" and i != 0 and history[i -1] == "c":
                         betray += 1
                         break
             if 'b' not in opponent_history:
@@ -321,6 +321,7 @@ def get_action(player, history, opponent_history, score, opponent_score, getting
                 return 'c'
             else:
                 return 'b'
+
 
 
 
